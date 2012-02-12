@@ -22,45 +22,53 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.Toast;
 
 /**
  * 
  * @author Andreea-Cristina Hodea
- * Date: 2011
+ * Date: dec 2011
  *
  * Weather Forecast Activity handles a list of possible weather forecasts locations.
  * 
  * Click on a city starts another activity which shows forecast for selected location, long click popups a dialog box 
  * for removal confirmation and eventually remove selected city from list. A button at the bottom of the screen is used
  * to add other cities to the list. For the list to persist, it is saved to an intern file and reloaded at every run. 
- * Both removal and adding bring the file up to date.  
+ * Both removal and adding bring the file up to date either if commit button is clicked or onStop/onDestroy.  
  * 
- * Format of history file is: city (country).
+ * Format of history file is: city (country). If no history file is found on the device, raw/history.txt is loaded 
+ * instead. 
  */
 public class WeatherForecastActivity extends ListActivity {
 	WeatherLocationAdapter adapter;
 	private final String historyFileName = "forecastHistory.txt";
 	private final int DIALOG_CONFIRM_REMOVE = 0;
 	private int selectedPos;
+	private boolean commitToFile = false;
 	
-	private void readForecastHistory(){
+	private void readForecastHistory(boolean fromDevice){
 		InputStream fis = null;
 		BufferedReader br = null;
 		String line;
 		try {
-			//fis = getResources().openRawResource(R.raw.history);
-			fis = openFileInput(historyFileName);
+			if (!fromDevice)
+				fis = getResources().openRawResource(R.raw.history);
+			else
+				fis = openFileInput(historyFileName);
 			br = new BufferedReader(new InputStreamReader(fis));
 			while ((line = br.readLine()) != null) {
 				//line = town (country)
 				int index = line.indexOf("(");
 				if (index  > -1 && index < line.length())
-					adapter.addWeatherLocation(line.substring(0, index-1), line.substring(index + 1, line.length() - 1));
-				
+					adapter.addWeatherLocation(line.substring(0, index-1), line.substring(index + 1, line.length() - 1));				
 			}
 		} catch (FileNotFoundException e) {
-			System.err.println("Forecast history not found.");
-			e.printStackTrace();
+			if (fromDevice)
+				readForecastHistory(!fromDevice);
+			else {
+				System.err.println("Forecast history not found.");
+				e.printStackTrace();
+			}			
 		} catch (IOException e) {
 			System.err.println("Error reading locations history.");
 			e.printStackTrace();
@@ -95,8 +103,10 @@ public class WeatherForecastActivity extends ListActivity {
 			}
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
+			commitToFile = false;
 		} catch (IOException e) {			
 			e.printStackTrace();
+			commitToFile = false;
 		} finally {
 			if (out != null)
 				try {
@@ -110,19 +120,24 @@ public class WeatherForecastActivity extends ListActivity {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			if (commitToFile) {
+				commitToFile = false;
+				Toast.makeText(WeatherForecastActivity.this, R.string.committed_list_message, Toast.LENGTH_SHORT)
+					.show();
+			}
 		}
 	}
 	
 	public void addToForecastHistory(String town, String country) {
 
-		if (adapter.addWeatherLocation(town, country))			
-			updateForecastHistory();
+		if (adapter.addWeatherLocation(town, country))		
+			commitToFile = true;
 	}
 	
 	private void removeFromForecastHistory(int position) {
 		
 		if (adapter.removeWeatherLocation(position)) {			
-			updateForecastHistory();
+			commitToFile = true;
 		}
 		
 	}
@@ -132,12 +147,12 @@ public class WeatherForecastActivity extends ListActivity {
 		case DIALOG_CONFIRM_REMOVE: 
 			return new AlertDialog.Builder(WeatherForecastActivity.this)
 			.setTitle(R.string.dialog_remove_loc_title)
-			.setPositiveButton(R.string.dialog_ok_button, new DialogInterface.OnClickListener() {
+			.setPositiveButton(R.string.ok_button, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {
 					removeFromForecastHistory(selectedPos);
 				}
 			})
-			.setNegativeButton(R.string.dialog_cancel_button, new DialogInterface.OnClickListener() {
+			.setNegativeButton(R.string.cancel_button, new DialogInterface.OnClickListener() {
 				public void onClick(DialogInterface dialog, int which) {}
 			}).create();
 		}
@@ -152,7 +167,7 @@ public class WeatherForecastActivity extends ListActivity {
         adapter = new WeatherLocationAdapter(this);
         setListAdapter(adapter);
         
-        readForecastHistory();
+        readForecastHistory(true);
         
         Button addLocButton = (Button)findViewById(R.id.addLocButton);
         addLocButton.setOnClickListener(new OnClickListener() {
@@ -163,6 +178,15 @@ public class WeatherForecastActivity extends ListActivity {
 				startActivity(intent);
 			}
 		}); 
+        
+        Button commitButton = (Button)findViewById(R.id.commitButton);
+        commitButton.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				if (commitToFile)
+					updateForecastHistory();
+			}
+		});
         
         getListView().setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> listAdapter, View view, int position, long id) {
@@ -177,7 +201,7 @@ public class WeatherForecastActivity extends ListActivity {
         		WeatherLocation loc = (WeatherLocation)adapter.getItem (position);
         		if (loc != null) {
         			Intent goToIntent = new Intent();
-        			goToIntent.setClass(WeatherForecastActivity.this, LocForecastActivity.class);
+        			goToIntent.setClass(WeatherForecastActivity.this, ForecastParser.class);
         			goToIntent.putExtra("loc", loc.getTown());
         			startActivity(goToIntent);
         		}
@@ -194,5 +218,17 @@ public class WeatherForecastActivity extends ListActivity {
     		//resume after adding new location
     		addToForecastHistory(loc.getTown(), loc.getCountry());
     	}
+    }
+    
+    public void onStop() {
+    	super.onStop();
+    	commitToFile = true;
+    	updateForecastHistory();
+    }
+    
+    public void onDestroy() {
+    	super.onDestroy();
+    	commitToFile = true;
+    	updateForecastHistory();
     }
 }

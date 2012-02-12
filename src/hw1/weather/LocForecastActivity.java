@@ -1,128 +1,35 @@
 package hw1.weather;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserException;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-/**
+ 
+/** 
+ * Display forecast for a city if the city name is known, otherwise display a message. Data needed for displaying the 
+ * forecast is loaded through intents and eventually 4 day weather forecast is displayed.
  * 
- * @author Andreea Hodea
- * 
- * Display forecast for a city if the city name is known. Weather forecast is gathered with an API from Google: 
- * "http://www.google.com/ig/api?weather=". After loading the XML file, it is parsed using XmlPullParser, data of 
- * interest is saved to forecast list and eventually 4 day weather forecast is displayed.
- *
- * Note: Feature to be added - progress dialog when loading and parsing xml file. 
+ *  @author acrish
  */
 public class LocForecastActivity extends Activity{
 	
-	private List<String> keyWords, forecast;
-	
-	
-	public void parseXmlFile(String fileContent) {
-		XmlPullParserFactory factory;
-		try {
-			factory = XmlPullParserFactory.newInstance();
-
-			factory.setNamespaceAware(true);
-			XmlPullParser xpp = factory.newPullParser();
-
-			xpp.setInput( new StringReader (fileContent) );
-			int eventType = xpp.getEventType();
-			while (eventType != XmlPullParser.END_DOCUMENT) {
-				if(eventType == XmlPullParser.START_TAG && keyWords.contains(xpp.getName()))
-					trackData(xpp, eventType);
-				eventType = xpp.next();
-			}
-		} catch (XmlPullParserException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	ArrayList<String> forecast;
 		
-		System.out.println(forecast);
-	}
-	
-	public void trackData(XmlPullParser xpp, int eventType) throws XmlPullParserException, IOException {
-		String principalTag = xpp.getName();
-		do {
-			eventType = xpp.next();
-			if (eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.END_TAG && xpp.getName().equals(principalTag)))
-				break;
-			if (eventType == XmlPullParser.START_TAG && keyWords.contains(xpp.getName()))
-				trackArgument(xpp, eventType, "data");
-		}while(true);
-	}
-	
-	public void trackArgument(XmlPullParser xpp, int eventType, String argument) {
-		for (int i = 0, n = xpp.getAttributeCount(); i < n; i++)
-			if (xpp.getAttributeName(i).equals(argument)) {
-				String val = xpp.getAttributeValue(i);
-				forecast.add(val);
-				Log.d("Xml parsing", xpp.getName() + ": " + val);
-				break;
-			}
-	}
-	
-	/**
-	 * Downloads xml file containing weather forecast for a town. Weather parameter within URL escapes blanks.
-	 *  
-	 * @param town town/city
-	 * @return false if an error took place, otherwise true.
-	 */
-	public boolean downloadFile(String town) {
-		town = town.toLowerCase().replace(" ", "%20");
-		try {
-			HttpGet getMethod=new HttpGet("http://www.google.com/ig/api?weather=" + town);
-			HttpClient client = new DefaultHttpClient ();
-
-			ResponseHandler<String> responseHandler=new BasicResponseHandler();
-			
-			String responseBody=client.execute(getMethod, responseHandler);
-			// responseBody reprezinta continutul fisierului RSS luat de pe Internet
-			if (!responseBody.contains("forecast_information"))
-				return false;
-			parseXmlFile(responseBody);
-		} catch (Throwable t) {
-			t.printStackTrace();
-			return false;
-		} 
-		return true;
-	}
-	
 	public void setCurrentForecast() {
 
 		TextView currCond = (TextView)findViewById(R.id.curr_condition);
 		currCond.setText(forecast.get(1));
 		
 		TextView currTemp = (TextView)findViewById(R.id.curr_temperature);
-		currTemp.setText("Temperature: " + forecast.get(2) + " C");
+		String text = getString(R.string.temperature) + " " + forecast.get(2) + " C";
+		currTemp.setText(text);
 		
 		TextView currHumidity = (TextView)findViewById(R.id.curr_humidity);
 		currHumidity.setText(forecast.get(3));
@@ -135,15 +42,19 @@ public class LocForecastActivity extends Activity{
 	}
 	
 	private void loadImage(ImageView i, int index) {
-		try {
-			  Bitmap bitmap = BitmapFactory.decodeStream((InputStream)new URL("http://www.google.com/" + 
-					  										forecast.get(index)).getContent());
-			  i.setImageBitmap(bitmap); 
-			} catch (MalformedURLException e) {
-			  e.printStackTrace();
-			} catch (IOException e) {
-			  e.printStackTrace();
+		if (index < forecast.size()) {
+			String pic = forecast.get(index);
+			try {
+				String picName = "drawable/" + pic.substring(pic.lastIndexOf('/')+1, pic.lastIndexOf('.'));
+				Log.i("drawable", picName);
+				Drawable image = getResources().getDrawable(
+													getResources().getIdentifier(picName, null, getPackageName()));
+				i.setImageDrawable(image);
+			}catch(Throwable t) {
+				t.printStackTrace();
 			}
+		}
+		
 	}
 	
 	/**
@@ -199,27 +110,22 @@ public class LocForecastActivity extends Activity{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		setContentView(R.layout.weather_forecast);
+		setContentView(R.layout.weather_forecast);		
+		
+		TextView loc = (TextView)findViewById(R.id.loc);
+		
 		Intent intent = getIntent();
-		
-		TextView loc = (TextView)findViewById(R.id.loc);		
-		
 		String town = intent.getStringExtra("loc");
-		loc.setText("Prognoza meteo pentru " + town);
-		Log.d("intent", "nume: " + town);
+		String message = getString(R.string.display_forecast_msg) + " " + town;
+		loc.setText(message);
+		Log.d("intent", "nume: " + town);	
+		forecast = intent.getStringArrayListExtra("forecast");
 		
-		keyWords = new LinkedList<String>();
-		forecast = new ArrayList<String>();
-		String[] aux = new String[] {"forecast_information", "forecast_date", "current_conditions", "condition", 
-				"temp_c", "humidity", "icon", "wind_condition", "forecast_conditions", "day_of_week", "low"};
-		keyWords = Arrays.asList(aux);
-		if (downloadFile(town)) {
-			setCurrentForecast(); 
-			setForecastPerDays();			
+		if (forecast != null && forecast.size() > 0){
+			setCurrentForecast();
+			setForecastPerDays();
 		}
-		else {
-			loc.setText(R.string.city_not_found);
-		}
+		else ((TextView)findViewById(R.id.forecast_now_text)).setText(R.string.selection_not_found);	
 		
 		Button backButton = (Button)findViewById(R.id.back_button);
 		backButton.setOnClickListener(new View.OnClickListener() {

@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="hello">Hello World, WeatherForecastActivity!</string>
-    <string name="app_name">Prognoza meteo</string>
-    <string name="dialog_remove_loc_title">Stergere locatie</string>
-    <string name="dialog_add_loc_message">Pentru a adauga o noua locatie, completati ambele campuri:</string>
-	<string name="dialog_add_loc_ok">Adauga</string>
-	<string name="dialog_add_loc_cancel">Anuleaza</string>
-	<string name="dialog_ok_button">Da</string>
-	<string name="dialog_cancel_button">Nu</string>
-	<string name="city_not_found">Orasul cautat nu a fost localizat.</string>
-     
+    <string name="app_name">Weather Forecast</string>
+    <string name="dialog_remove_loc_title">Remove location</string>
+    <string name="dialog_add_loc_message">To add a new location to the list, fill in all fields:</string>
+	<string name="dialog_add_loc_ok">Add</string>
+	<string name="ok_button">Ok</string>
+	<string name="cancel_button">Cancel</string>
+	<string name="parse_forecast_xml_message">Searching forecast for</string>
+	<string name="now">Now</string> 
+	<string name="display_forecast_msg">Forecast for </string>
+	<string name="selection_not_found">Selection not found</string>
+	<string name="city">City/Town:</string>
+	<string name="country">Country:</string>    
+	<string name="temperature">Temperature:</string>
+	<string name="add_button">Add</string>
+	<string name="commit_button">Commit</string>
+	<string name="committed_list_message">Saved modified list to file.</string>
+	    
 </resources>

@@ -21,7 +21,8 @@
 
             <TextView
                 android:layout_weight="1"
-                android:text="Now"
+                android:id="@+id/forecast_now_text"
+                android:text="@string/now"
                 android:textStyle="bold" 
                 android:textColor="@color/header"/>
             <ImageView

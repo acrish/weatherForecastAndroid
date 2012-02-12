@@ -10,11 +10,23 @@
         android:layout_width="fill_parent"
         android:layout_weight="1.0"/>        
     
-    
-    <Button 
-        android:id="@+id/addLocButton"    
-        android:layout_width="200px"
+    <LinearLayout 
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Add"/>
+        android:orientation="horizontal">
+	    <Button 
+	        android:id="@+id/addLocButton"    
+	        android:layout_width="200px"
+	        android:layout_height="wrap_content"
+	        android:text="@string/add_button"/>
+	    
+	    <Button 
+	        android:id="@+id/commitButton"    
+	        android:layout_width="200px"
+	        android:layout_height="wrap_content"
+	        android:text="@string/commit_button"
+	        android:layout_gravity="right"/>
+        
+    </LinearLayout>
     
 </LinearLayout>
