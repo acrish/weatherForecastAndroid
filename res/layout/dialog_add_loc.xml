@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+           
+        <TextView android:text="@string/dialog_add_loc_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1.0" > 
+        
+        <TextView 
+            android:text="Oras: "
+            android:layout_width="100px"
+            android:layout_height="80px"/>
+        <EditText 
+        android:id="@+id/addTown"
+        android:layout_width="300px"
+        android:layout_height="80px"/>
+    </LinearLayout>
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1.0" >
+            
+        <TextView android:text="Tara: "
+            android:layout_width="100px"
+            android:layout_height="80px"/>
+    <EditText 
+        android:id="@+id/addCountry"
+        android:layout_width="300px"
+        android:layout_height="80px"/> 
+    </LinearLayout> 
+    
+    <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_weight="1.0" >
+    <Button
+        android:id="@+id/addLocButton" 
+        android:text="@string/dialog_add_loc_ok"
+        android:layout_width="150px"
+        android:layout_height="80px"/>
+    <Button
+        android:id="@+id/cancelLocButton" 
+        android:text="@string/dialog_add_loc_cancel"
+        android:layout_width="150px"
+        android:layout_height="80px"/>
+    </LinearLayout>
+
+</LinearLayout>

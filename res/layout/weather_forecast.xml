@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView 
+        android:id="@+id/loc"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:layout_marginBottom="10px"/>
+    
+    <TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:stretchColumns="1"
+    	android:background="@color/curr_forecast">        
+
+        <TableRow android:layout_marginTop="10px">
+
+            <TextView
+                android:layout_weight="1"
+                android:text="Now"
+                android:textStyle="bold" 
+                android:textColor="@color/header"/>
+            <ImageView
+                android:id="@+id/curr_icon"                
+                android:layout_weight="1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />           
+        </TableRow>
+
+        <TableRow>
+            <TextView 
+                android:id="@+id/curr_temperature"/>
+             <TextView
+                android:id="@+id/curr_condition"
+                android:gravity="center_horizontal" />
+        </TableRow>
+        <TableRow>
+            <TextView 
+                android:id="@+id/curr_humidity"/>
+        </TableRow>
+        <TableRow ><TextView android:id="@+id/curr_wind_condition" />
+        </TableRow>
+    </TableLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_marginBottom="20px"
+        android:layout_marginTop="20px"
+        android:background="#FF909090" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1.0" >
+
+            <TableLayout
+                android:layout_width="200px"
+                android:layout_height="fill_parent"
+                android:stretchColumns="1" >
+                <TableRow >
+                    <TextView
+                        android:id="@+id/day1"
+                        android:layout_weight="1" />
+                </TableRow>
+                <TableRow >
+                    <ImageView
+                        android:id="@+id/icon1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" 
+                        android:layout_gravity="left" />                    
+                </TableRow>
+                <TableRow >
+                    <TextView android:id="@+id/cond1"/>
+                </TableRow>
+                <TableRow ><TextView
+                        android:id="@+id/low1" /></TableRow>
+            </TableLayout>
+
+            <TableLayout
+                android:layout_width="200px"
+                android:layout_height="fill_parent"
+                android:stretchColumns="1" >
+                <TableRow >
+                    <TextView android:id="@+id/day2" 
+                        android:layout_weight="1"/>                    
+                </TableRow>
+                <TableRow >
+                    <ImageView
+                        android:id="@+id/icon2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="left" />                    
+                </TableRow>
+                <TableRow >
+                    <TextView android:id="@+id/cond2" />
+                </TableRow>
+                <TableRow ><TextView android:id="@+id/low2"/></TableRow>
+			</TableLayout>
+			</LinearLayout>
+			<LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1.0" >
+                <TableLayout
+                    android:layout_width="200px"
+                    android:layout_height="fill_parent"
+                    android:stretchColumns="1" >
+                    <TableRow >
+                        <TextView android:id="@+id/day3"
+                            android:layout_weight="1" />
+                    </TableRow>
+                    <TableRow >
+                        <ImageView
+                            android:id="@+id/icon3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" 
+                            android:layout_gravity="left" />
+                    </TableRow>
+					<TableRow >
+                        <TextView android:id="@+id/cond3" />
+					</TableRow>
+					<TableRow >                        
+                        <TextView android:id="@+id/low3"/></TableRow>
+			</TableLayout>
+
+            <TableLayout
+                android:layout_width="200px"
+                android:layout_height="fill_parent"
+                android:stretchColumns="1" >
+
+                <TableRow >
+
+                    <TextView
+                        android:id="@+id/day4"
+                        android:layout_weight="1" />
+                </TableRow>
+
+                <TableRow >
+
+                    <ImageView
+                        android:id="@+id/icon4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" 
+                        android:layout_gravity="left" />
+                </TableRow>
+				<TableRow ><TableRow >
+                        <TextView android:id="@+id/cond4" />
+					</TableRow></TableRow>
+                <TableRow >
+
+                    <TextView
+                        android:id="@+id/low4"
+                        android:layout_weight="1" />
+                </TableRow>
+            </TableLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/back_button"
+            android:layout_width="200px"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:text="Back" />
+</LinearLayout>

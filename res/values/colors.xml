@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="header">#5655AA</color>
+    <color name="curr_forecast">#8b7765</color>
+    
+</resources>
