@@ -124,7 +124,8 @@ public class ForecastParser extends Activity implements Runnable{
 		String principalTag = xpp.getName();
 		do {
 			eventType = xpp.next();
-			if (eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.END_TAG && xpp.getName().equals(principalTag)))
+			if (eventType == XmlPullParser.END_DOCUMENT || (eventType == XmlPullParser.END_TAG && xpp.getName().
+																						equals(principalTag)))
 				break;
 			if (eventType == XmlPullParser.START_TAG && keyWords.contains(xpp.getName()))
 				trackArgument(xpp, eventType, "data");

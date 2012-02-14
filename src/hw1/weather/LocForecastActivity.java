@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
  
 /** 
  * Display forecast for a city if the city name is known, otherwise display a message. Data needed for displaying the 
@@ -22,7 +23,7 @@ public class LocForecastActivity extends Activity{
 	
 	ArrayList<String> forecast;
 		
-	public void setCurrentForecast() {
+	public void setCurrentForecast() throws Exception {
 
 		TextView currCond = (TextView)findViewById(R.id.curr_condition);
 		currCond.setText(forecast.get(1));
@@ -66,7 +67,7 @@ public class LocForecastActivity extends Activity{
 	 * @param cond condition
 	 * @param code index of the day within the set of four days.
 	 */
-	public void setDayForecast(TextView day, TextView low, ImageView i, TextView cond, int code){
+	public void setDayForecast(TextView day, TextView low, ImageView i, TextView cond, int code) throws Exception{
 		int index = 6 + code * 4;
 		if (code == 0)			
 			day.setText("Today");
@@ -74,14 +75,13 @@ public class LocForecastActivity extends Activity{
 			day.setText(forecast.get(index));
 		low.setText("Low: " + ((Long.parseLong(forecast.get(index + 1)) - 32) * 5 / 9) + " C");
 		loadImage(i, index+2);
-		//imageView.setImageResource(R.drawable.sunny);
 		cond.setText(forecast.get(index + 3));
 	}
 	
 	/**
 	 * Set parameters for all four days.
 	 */
-	public void setForecastPerDays(){		
+	public void setForecastPerDays() throws Exception {		
 		TextView day = (TextView)findViewById(R.id.day1);
 		TextView low = (TextView)findViewById(R.id.low1);
 		ImageView imageView = (ImageView)findViewById(R.id.icon1);
@@ -122,8 +122,13 @@ public class LocForecastActivity extends Activity{
 		forecast = intent.getStringArrayListExtra("forecast");
 		
 		if (forecast != null && forecast.size() > 0){
-			setCurrentForecast();
-			setForecastPerDays();
+			try {
+				setCurrentForecast();
+				setForecastPerDays();
+			} catch (Exception e) {
+				e.printStackTrace();
+				Toast.makeText(this, "Error loading forecast", Toast.LENGTH_LONG).show();
+			}			
 		}
 		else ((TextView)findViewById(R.id.forecast_now_text)).setText(R.string.selection_not_found);	
 		

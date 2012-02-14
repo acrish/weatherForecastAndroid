@@ -34,7 +34,7 @@ import android.widget.Toast;
  * Click on a city starts another activity which shows forecast for selected location, long click popups a dialog box 
  * for removal confirmation and eventually remove selected city from list. A button at the bottom of the screen is used
  * to add other cities to the list. For the list to persist, it is saved to an intern file and reloaded at every run. 
- * Both removal and adding bring the file up to date either if commit button is clicked or onStop/onDestroy.  
+ * Both removal and adding bring the file up to date if commit button is clicked.  
  * 
  * Format of history file is: city (country). If no history file is found on the device, raw/history.txt is loaded 
  * instead. 
@@ -220,15 +220,5 @@ public class WeatherForecastActivity extends ListActivity {
     	}
     }
     
-    public void onStop() {
-    	super.onStop();
-    	commitToFile = true;
-    	updateForecastHistory();
-    }
-    
-    public void onDestroy() {
-    	super.onDestroy();
-    	commitToFile = true;
-    	updateForecastHistory();
-    }
+
 }
